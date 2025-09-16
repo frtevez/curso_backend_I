@@ -3,11 +3,12 @@ import CartManager from './cartManager';
 import ProductManager from './productManager';
 
 const app = express();
+app.use(express.json());
 const cartManager = new CartManager('./cartManager.json');
 const productManager = new ProductManager('./productManager.json');
 
 app.get('/api/products/', async (req, res) => {
-    // Debe listar todos los productos de la base de datos.
+
     try {
         const products = await productManager.getProducts();
         res.status(200).json({ message: "Products:", products });
@@ -16,7 +17,7 @@ app.get('/api/products/', async (req, res) => {
     }
 })
 app.get('/api/products/:pid', async (req, res) => {
-    // Debe traer solo el producto con el id proporcionado.
+
     try {
         const pid = req.params.pid;
         const product = await productManager.getProductById(pid);
@@ -25,72 +26,69 @@ app.get('/api/products/:pid', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 })
-app.post('/api/products/', (req, res) => {
-    // Debe agregar un nuevo producto con los siguientes campos:
-    // id: Number/String (No se manda desde el body, se autogenera para asegurar que nunca se repitan los ids).
-    // title: String
-    // description: String
-    // code: String
-    // price: Number
-    // status: Boolean
-    // stock: Number
-    // category: String
-    // thumbnails: Array de Strings (rutas donde están almacenadas las imágenes del producto).
+app.post('/api/products/', async (req, res) => {
+    try {
+        const product = req.body;
+        await productManager.addProduct(product);
+        const products = await productManager.getProducts();
+        res.status(201).json({ message: "Product Successfully Added", products });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 })
-app.put('/api/products/:pid', (req, res) => {
-    // Debe actualizar un producto por los campos enviados desde el body. 
-    // No se debe actualizar ni eliminar el id al momento de hacer la actualización.
+app.put('/api/products/:pid', async (req, res) => {
+    try {
+        const pid = req.params.pid;
+        const updates = req.body;
+        await productManager.setProductById(pid, updates);
+        const products = await productManager.getProducts();
+        res.status(200).json({ message: "Product Successfully Updated", products });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 })
-app.delete('/api/products/:pid', (req, res) => {
-    // Debe eliminar el producto con el pid indicado.
+app.delete('/api/products/:pid', async (req, res) => {
+    try {
+        const pid = req.params.pid;
+        await productManager.removeProductById(pid);
+        const products = await productManager.getProducts();
+        res.status(200).json({ message: "Product Successfully Removed", products });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 })
 
-app.post('/api/carts/', (req, res) => {
-    /*
-    Debe crear un nuevo carrito con la siguiente estructura:
-        id: Number/String (Autogenerado para asegurar que nunca se dupliquen los ids).
-        products: Array que contendrá objetos que representen cada producto.
-     */
+app.post('/api/carts/', async (req, res) => {
+    try {
+        await cartManager.addCart();
+        const carts = cartManager.getCarts();
+        res.status(201).json({ message: "Cart Successfully Added", carts });
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 })
-app.get('/api/carts/:cid', (req, res) => {
-    // Debe listar los productos que pertenecen al carrito con el cid proporcionado.
+app.get('/api/carts/:cid', async (req, res) => {
+    try {
+        const cid = req.params.cid;
+        const cart = await cartManager.getCartById(cid);
+        const cartProducts = cart['products'];
+        res.status(200).json({ message: "Cart Products:", cartProducts });
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 })
-app.post('/api/carts/:cid/products/:pid', (req, res) => {
-    // Debe agregar el producto al arreglo products del carrito seleccionado, utilizando el siguiente formato:
-    //      product: Solo debe contener el ID del producto.
-    //      quantity: Debe contener el número de ejemplares de dicho producto (se agregará de uno en uno).
-    // Si un producto ya existente intenta agregarse, se debe incrementar el campo quantity de dicho producto.
+app.post('/api/carts/:cid/products/:pid', async (req, res) => {
+    try {
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+        await cartManager.addToCart(cid, pid, 1)
+        const carts = await cartManager.getCarts();
+        res.status(201).json({ message: "Product Successfully Added to Cart", carts });
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 })
 
 app.listen(8080, () => {
     console.log('Servidor Iniciado');
 });
-
-class ProductManager {
-    constructor() {
-        this.products = [];
-    };
-    addProduct({ title, description = "", price = 0, thumbnail = "", code, stock = 0 } = {}) {
-        const product = { title, description, price, thumbnail, code, stock };
-        this.products.push(product);
-    };
-    getProducts() {
-        return this.products;
-    };
-    getProductById(id) {
-        const product = this.products.find((p) => p.id = id)
-        if (product == undefined) {
-            console.log("Not Found")
-            return
-        };
-        return product
-    };
-
-};
-
-let prods = new ProductManager();
-prods.addProduct({
-    title: "a",
-    code: "aabb"
-});
-console.log(prods.getProducts());
