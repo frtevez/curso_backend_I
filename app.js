@@ -1,11 +1,11 @@
 import express from 'express';
-import CartManager from './cartManager';
-import ProductManager from './productManager';
+import CartManager from './cartManager.js';
+import ProductManager from './productManager.js';
 
 const app = express();
 app.use(express.json());
-const cartManager = new CartManager('./cartManager.json');
-const productManager = new ProductManager('./productManager.json');
+const cartManager = new CartManager('./carts.json');
+const productManager = new ProductManager('./products.json');
 
 app.get('/api/products/', async (req, res) => {
 
