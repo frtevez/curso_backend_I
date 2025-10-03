@@ -1,11 +1,20 @@
 import express from 'express';
 import CartManager from './cartManager.js';
 import ProductManager from './productManager.js';
+import { engine } from 'express-handlebars';    
 
 const app = express();
 app.use(express.json());
 const cartManager = new CartManager('./carts.json');
 const productManager = new ProductManager('./products.json');
+
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+app.set('views', './views');
+
+app.get('/', (req, res) => {
+    res.render('home')
+});
 
 app.get('/api/products/', async (req, res) => {
 
@@ -15,7 +24,7 @@ app.get('/api/products/', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-})
+});
 app.get('/api/products/:pid', async (req, res) => {
 
     try {
@@ -25,7 +34,7 @@ app.get('/api/products/:pid', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-})
+});
 app.post('/api/products/', async (req, res) => {
     try {
         const product = req.body;
@@ -35,7 +44,7 @@ app.post('/api/products/', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-})
+});
 app.put('/api/products/:pid', async (req, res) => {
     try {
         const pid = req.params.pid;
@@ -46,7 +55,7 @@ app.put('/api/products/:pid', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-})
+});
 app.delete('/api/products/:pid', async (req, res) => {
     try {
         const pid = req.params.pid;
@@ -56,7 +65,7 @@ app.delete('/api/products/:pid', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-})
+});
 
 app.post('/api/carts/', async (req, res) => {
     try {
@@ -66,7 +75,7 @@ app.post('/api/carts/', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
-})
+});
 app.get('/api/carts/:cid', async (req, res) => {
     try {
         const cid = req.params.cid;
@@ -76,7 +85,7 @@ app.get('/api/carts/:cid', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
-})
+});
 app.post('/api/carts/:cid/products/:pid', async (req, res) => {
     try {
         const cid = req.params.cid;
@@ -87,7 +96,7 @@ app.post('/api/carts/:cid/products/:pid', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
-})
+});
 
 app.listen(8080, () => {
     console.log('Servidor Iniciado');
