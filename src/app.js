@@ -8,8 +8,8 @@ import cartsRouter from './routers/cartsRouter.js';
 
 const app = express();
 app.use(express.json());
-const cartManager = new CartManager('./src/carts.json');
-const productManager = new ProductManager('./src/products.json');
+app.use( express.static("public") );
+app.use( express.urlencoded( { extended: true } ) );
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');

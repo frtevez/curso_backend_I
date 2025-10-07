@@ -1,6 +1,8 @@
 import express from "express";
+import ProductManager from "../productManager.js";
 
 const productsRouter = express.Router();
+const productManager = new ProductManager('./src/products.json');
 
 productsRouter.get('/', async (req, res) => {
 
@@ -23,12 +25,16 @@ productsRouter.get('/:pid', async (req, res) => {
 });
 productsRouter.post('/', async (req, res) => {
     try {
-        const product = req.body;
+        const title = req.body.title;
+        const price = parseInt(req.body.price);
+        const thumbnail = req.body.thumbnail;
+        const product = {title, price, thumbnail}
         await productManager.addProduct(product);
         const products = await productManager.getProducts();
+        res.redirect("/");
         res.status(201).json({ message: "Product Successfully Added", products });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message + req.body});
     }
 });
 productsRouter.put('/:pid', async (req, res) => {
