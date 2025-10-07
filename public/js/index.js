@@ -41,8 +41,6 @@ productList.addEventListener("click", e => {
 });
 
 socket.on("deletedProduct", productId => {
-    console.log('asd');
-    
     const product = document.getElementById(productId);
 
     product.remove();
