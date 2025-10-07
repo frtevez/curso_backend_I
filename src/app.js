@@ -5,7 +5,6 @@ import productsRouter from './routers/productsRouter.js';
 import cartsRouter from './routers/cartsRouter.js';
 import { Server } from "socket.io";
 import http from "http";
-import { Console } from 'console';
 import ProductManager from './productManager.js';
 
 const app = express();
