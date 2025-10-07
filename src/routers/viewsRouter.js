@@ -12,8 +12,21 @@ viewsRouter.get("/", async (req, res) => {
     } catch (error) {
         res.status(500).send({ message: error.message });
 
-    }
+    };
 
 });
+
+viewsRouter.get("/realTimeProducts", async (req, res) => {
+    try {
+        const products = await productManager.getProducts();
+        res.render("realTimeProducts", { products });
+
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+
+    };
+
+});
+
 
 export default viewsRouter;
