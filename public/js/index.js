@@ -19,11 +19,32 @@ newProductForm.addEventListener("submit", e => {
     socket.emit('newProduct', product);
 });
 
+const productList = document.getElementById("productList");
 socket.on("addedProduct", product => {
-    const productList = document.getElementById("productList");
 
     productList.innerHTML += `
-    <li> <img src="" alt="">
+    <li class="product" id="${product.id}"> <img src="" alt="">
     <h2> ${product.title} </h2>
-    <p> ${product.price} </p> </li>`;
+    <p> ${product.price} </p> 
+    <button class="deleteProduct">Delete</button></li>
+    `;
+
+
+});
+
+productList.addEventListener("click", e => {
+    e.preventDefault();
+    if (e.target.classList.contains("deleteProduct")){
+        const productId = e.target.parentElement.id;
+        socket.emit("deleteProduct", productId);
+    };
+});
+
+socket.on("deletedProduct", productId => {
+    console.log('asd');
+    
+    const product = document.getElementById(productId);
+
+    product.remove();
+    
 });

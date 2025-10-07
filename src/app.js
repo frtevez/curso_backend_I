@@ -32,11 +32,21 @@ io.on("connection", (socket) => {
 
     socket.on("newProduct", async product => {
         try {
-            await productManager.addProduct(product);
-
-            io.emit("addedProduct", product);
+            const productId = await productManager.addProduct(product);
+            const newProduct = {...product, id: productId};
+            
+            io.emit("addedProduct", newProduct);
         } catch (error) {
-            console.error("Failed to add product")
+            console.error("Failed to add product", error)
+        };
+    });
+    socket.on("deleteProduct", async productId => {
+        try {
+            await productManager.removeProductById(productId);
+
+            io.emit("deletedProduct", productId);
+        } catch (error) {
+            console.error("Failed to delete product", error)
         };
     });
 });

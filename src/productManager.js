@@ -30,6 +30,7 @@ class ProductManager {
         const product = { id: id, ...newProduct };
         products.push(product);
         await this.updateProducts(products);
+        return id;
     };
 
     async setProductById(id, updates) {
