@@ -5,50 +5,48 @@ import productsRouter from './routers/productsRouter.js';
 import cartsRouter from './routers/cartsRouter.js';
 import { Server } from "socket.io";
 import http from "http";
-import ProductManager from './productManager.js';
 import connectMongoDB from './config/db.js';
 import { configDotenv } from 'dotenv';
+import __dirname from "../dirname.js";
+import Product from './models/productModel.js';
 
-configDotenv();
+configDotenv({ path: __dirname + "/.env" });
+connectMongoDB();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const PORT = process.env.PORT;
-
-
-connectMongoDB();
+const PORT = process.env.PORT
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', './src/views');
+app.set('views', __dirname + '/src/views');
 
 app.use('/', viewsRouter);
 app.use("/api/products", productsRouter);
 app.use('/api/carts/', cartsRouter);
 
-const productManager = new ProductManager("./src/products.json");
 io.on("connection", (socket) => {
     console.log("New User Connected");
 
-    socket.on("newProduct", async product => {
+    socket.on("newProduct", async newProduct => {
         try {
-            const productId = await productManager.addProduct(product);
-            const newProduct = {...product, id: productId};
-            
-            io.emit("addedProduct", newProduct);
+            const { title, description, price, status, stock, category, thumbnails } = newProduct;
+            const product = new Product({ title, description, price, status, stock, category, thumbnails });
+            await product.save();
+            io.emit("addedProduct", product);
         } catch (error) {
             console.error("Failed to add product", error)
         };
     });
     socket.on("deleteProduct", async productId => {
         try {
-            await productManager.removeProductById(productId);
+            await Product.findByIdAndDelete(productId);
 
             io.emit("deletedProduct", productId);
         } catch (error) {

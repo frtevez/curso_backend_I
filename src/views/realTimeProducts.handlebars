@@ -1,22 +1,67 @@
-<div>
-    <h1>PRODUCTS</h1>
-    <form id="newProductForm">
-        <input type="text" name="title">
-        <input type="number" name="price">
-        <input type="file" name="thumbnail">
+<div class="container py-5">
+  <h1 class="text-center mb-4">⚡ Real-Time Products</h1>
 
-        <button type="submit">Add Product</button>
-    </form>
-    <ul id="productList">
-        {{#each products}}
-        <li class="product" id="{{this.id}}">
-            <img src="{{this.thumbnails.[0]}}" alt="">
-            <h2> {{this.title}} </h2>
-            <p> {{this.price}} </p>
-            <button class="deleteProduct">Delete</button>
-        </li>
-        {{/each}}
-    </ul>
+  <form id="newProductForm" class="card p-4 shadow-sm mb-5">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Title *</label>
+        <input type="text" name="title" class="form-control" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Category</label>
+        <input type="text" name="category" class="form-control" placeholder="e.g. electronics">
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="2"></textarea>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Price *</label>
+        <input type="number" name="price" class="form-control" min="0" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Stock</label>
+        <input type="number" name="stock" class="form-control" min="0">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="true" selected>Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Thumbnail</label>
+        <input type="file" name="thumbnail" class="form-control">
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success mt-3">Add Product</button>
+      </div>
+    </div>
+  </form>
+
+  <h2 class="text-center mb-3">📦 Product List</h2>
+  <ul id="productList" class="row list-unstyled g-3">
+    {{#each products}}
+    <li class="col-md-4 product" id="{{this._id}}">
+      <div class="card h-100 shadow-sm">
+        <img src="{{this.thumbnails.[0]}}" class="card-img-top" alt="Product Image">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{this.title}}</h5>
+          <p class="card-text">${{this.price}}</p>
+          <p class="text-muted small mb-3">{{this.category}}</p>
+          <button class="btn btn-danger mt-auto deleteProduct">Delete</button>
+        </div>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
 </div>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+

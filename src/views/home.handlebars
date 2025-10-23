@@ -1,18 +1,68 @@
-<div>
-    <h1>PRODUCTS</h1>
-    <form action="http://localhost:8080/api/products" method="post">
-        <input type="text" name="title">
-        <input type="number" name="price">
+<div class="container py-5">
+  <h1 class="text-center mb-4">🛍️ Product Manager</h1>
 
-        <button type="submit">Add Product</button>
-    </form>
-    <ul>
-        {{#each products}}
-        <li>
-            <img src="{{this.thumbnails.[0]}}" alt="">
-            <h2> {{this.title}} </h2>
-            <p> {{this.price}} </p>
-        </li>
-        {{/each}}
-    </ul>
+  <form action="http://localhost:8080/api/products" method="post" class="card p-4 shadow-sm">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Title *</label>
+        <input type="text" name="title" class="form-control" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Category</label>
+        <input type="text" name="category" class="form-control" placeholder="e.g. electronics">
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="2" placeholder="Short description..."></textarea>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Price *</label>
+        <input type="number" name="price" class="form-control" min="0" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Stock</label>
+        <input type="number" name="stock" class="form-control" min="0">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="true" selected>Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Thumbnails</label>
+        <input type="text" name="thumbnails" class="form-control" placeholder="Image URL (comma separated)">
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Add Product</button>
+      </div>
+    </div>
+  </form>
+
+  <hr class="my-5">
+
+  <h2 class="text-center mb-3">📦 Products</h2>
+  <ul class="row list-unstyled g-3">
+    {{#each products}}
+    <li class="col-md-4 product" id="{{this._id}}">
+      <div class="card h-100 shadow-sm">
+        <img src="{{this.thumbnails.[0]}}" class="card-img-top" alt="Product Image">
+        <div class="card-body">
+          <h5 class="card-title">{{this.title}}</h5>
+          <p class="card-text">${{this.price}}</p>
+          <p class="text-muted small">{{this.category}}</p>
+        </div>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
 </div>
+
