@@ -6,11 +6,18 @@ import cartsRouter from './routers/cartsRouter.js';
 import { Server } from "socket.io";
 import http from "http";
 import ProductManager from './productManager.js';
+import connectMongoDB from './config/db.js';
+import { configDotenv } from 'dotenv';
+
+configDotenv();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const PORT = 8080;
+const PORT = process.env.PORT;
+
+
+connectMongoDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,31 +1,24 @@
 import express from "express";
-import ProductManager from "../productManager.js";
+import Product from "../models/productModel.js";
 
 const viewsRouter = express.Router();
-const productManager = new ProductManager("./src/products.json")
 
 viewsRouter.get("/", async (req, res) => {
     try {
-        const products = await productManager.getProducts();
+        const products = await Product.find()
         res.render("home", { products });
-
     } catch (error) {
-        res.status(500).send({ message: error.message });
-
+        res.status(500).send({ status: "error", message: error.message });
     };
-
 });
 
 viewsRouter.get("/realTimeProducts", async (req, res) => {
     try {
-        const products = await productManager.getProducts();
+        const products = await Product.find()
         res.render("realTimeProducts", { products });
-
     } catch (error) {
-        res.status(500).send({ message: error.message });
-
+        res.status(500).send({ status: "error", message: error.message });
     };
-
 });
 
 
