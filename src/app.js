@@ -9,6 +9,7 @@ import connectMongoDB from './config/db.js';
 import { configDotenv } from 'dotenv';
 import __dirname from "../dirname.js";
 import Product from './models/productModel.js';
+import crypto from "crypto";
 
 configDotenv({ path: __dirname + "/.env" });
 connectMongoDB();
@@ -36,7 +37,8 @@ io.on("connection", (socket) => {
 
     socket.on("newProduct", async newProduct => {
         try {
-            const { title, description, code, price, status, stock, category, thumbnails } = newProduct;
+            const { title, description, code: incomingCode, price, status, stock, category, thumbnails } = newProduct;
+            const code = incomingCode ?? crypto.randomUUID();
             const product = new Product({ title, description, code, price, status, stock, category, thumbnails });
             await product.save();
             io.emit("addedProduct", product);

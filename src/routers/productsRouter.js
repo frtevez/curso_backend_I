@@ -1,5 +1,6 @@
 import express from "express";
 import Product from "../models/productModel.js";
+import crypto from "crypto";
 
 const productsRouter = express.Router();
 
@@ -22,11 +23,12 @@ productsRouter.get('/:pid', async (req, res) => {
 });
 productsRouter.post('/', async (req, res) => {
     try {
-        const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-        const product = new Product({ title, description, code, price, status, stock, category, thumbnails });
-        await product.save();
+        const { title, description, code: codeFromReq, price, status, stock, category, thumbnails } = req.body;
+        const code = codeFromReq ?? crypto.randomUUID();
+        const newProduct = new Product({ title, description, code, price, status, stock, category, thumbnails });
+        await newProduct.save();
         res.redirect("/");
-        res.status(201).json({ status: "success", payload: product });
+        res.status(201).json({ status: "success", payload: newProduct });
     } catch (error) {
         res.status(500).json({ status: "error", message: error.message });
     };
