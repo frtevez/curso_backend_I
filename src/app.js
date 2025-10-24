@@ -36,8 +36,8 @@ io.on("connection", (socket) => {
 
     socket.on("newProduct", async newProduct => {
         try {
-            const { title, description, price, status, stock, category, thumbnails } = newProduct;
-            const product = new Product({ title, description, price, status, stock, category, thumbnails });
+            const { title, description, code, price, status, stock, category, thumbnails } = newProduct;
+            const product = new Product({ title, description, code, price, status, stock, category, thumbnails });
             await product.save();
             io.emit("addedProduct", product);
         } catch (error) {

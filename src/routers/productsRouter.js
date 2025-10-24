@@ -22,8 +22,8 @@ productsRouter.get('/:pid', async (req, res) => {
 });
 productsRouter.post('/', async (req, res) => {
     try {
-        const { title, description, price, status, stock, category, thumbnails } = req.body;
-        const product = new Product({ title, description, price, status, stock, category, thumbnails });
+        const { title, description, code, price, status, stock, category, thumbnails } = req.body;
+        const product = new Product({ title, description, code, price, status, stock, category, thumbnails });
         await product.save();
         res.redirect("/");
         res.status(201).json({ status: "success", payload: product });
