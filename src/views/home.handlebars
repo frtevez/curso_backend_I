@@ -65,4 +65,6 @@
     {{/each}}
   </ul>
 </div>
-
+{{#each pageLinks}}
+  <a href="{{this.link}}">{{this.pageNumber}}</a>
+{{/each}}
